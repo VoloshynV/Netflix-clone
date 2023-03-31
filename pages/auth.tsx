@@ -1,5 +1,9 @@
 import Input from '@/components/Input'
+import axios from 'axios'
+import { signIn } from 'next-auth/react'
 import { useCallback, useState } from 'react'
+import { FaGithub } from 'react-icons/fa'
+import { FcGoogle } from 'react-icons/fc'
 
 enum Variant {
   LOGIN,
@@ -7,7 +11,7 @@ enum Variant {
 }
 
 const Auth = () => {
-  const [userName, setUserName] = useState('')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -18,6 +22,37 @@ const Auth = () => {
   }, [])
 
   const isLogin = variant === Variant.LOGIN
+
+  const login = useCallback(async () => {
+    try {
+      await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: '/profiles',
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }, [email, password])
+
+  const register = useCallback(async () => {
+    try {
+      await axios.post('/api/register', {
+        email,
+        name,
+        password,
+      })
+
+      login()
+    } catch (error) {
+      console.log(error)
+    }
+  }, [email, name, password, login])
+
+  const handleOnButtonClick = () => {
+    isLogin ? login() : register()
+  }
 
   return (
     <div className='relative h-full w-full bg-[url("/images/hero.jpeg")] bg-no-repeat bg-center bg-cover'>
@@ -34,9 +69,9 @@ const Auth = () => {
               {!isLogin && (
                 <Input
                   label='Username'
-                  onChange={(e) => setUserName(e.target.value)}
+                  onChange={(e) => setName(e.target.value)}
                   id='username'
-                  value={userName}
+                  value={name}
                 />
               )}
               <Input
@@ -54,9 +89,24 @@ const Auth = () => {
                 value={password}
               />
             </div>
-            <button className='bg-red-600 py-3 text-white rounded-md w-full mt-10 hover:bg-red-700 transition'>
+            <button
+              onClick={handleOnButtonClick}
+              className='bg-red-600 py-3 text-white rounded-md w-full mt-10 hover:bg-red-700 transition'>
               {isLogin ? 'Login' : 'Sign up'}
             </button>
+            <div className='flex flex-row items-center gap-4 mt-8  justify-center'>
+              <div
+                onClick={() => signIn('google', { callbackUrl: '/profiles' })}
+                className='w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition'>
+                <FcGoogle size={30} />
+              </div>
+              <div
+                onClick={() => signIn('github', { callbackUrl: '/profiles' })}
+                className='w-10 h-10 bg-white rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition'>
+                <FaGithub size={30} />
+              </div>
+              <FaGithub size={30} />
+            </div>
             <p className='text-neutral-500 mt-12'>
               {isLogin ? "Don't have an account?" : 'Already have an account?'}
               <span className='text-white ml-1 hover:underline' onClick={toggleVariant}>
