@@ -1,13 +1,14 @@
 import { FC } from 'react'
 import { BsFillPlayFill } from 'react-icons/bs'
 
+import FavoriteButton from '@/components/FavoriteButton'
 import { Movie } from '@/types/movie'
 
 interface MovieCardProps {
   data: Movie
 }
 
-const MovieCard: FC<MovieCardProps> = ({ data: { thumbnailUrl, duration, genre } }) => {
+const MovieCard: FC<MovieCardProps> = ({ data: { thumbnailUrl, duration, genre, id } }) => {
   return (
     <div className='col-span group relative h-[12vw] bg-zinc-900'>
       <img
@@ -31,6 +32,7 @@ const MovieCard: FC<MovieCardProps> = ({ data: { thumbnailUrl, duration, genre }
              bg-white transition hover:bg-neutral-300 lg:h-10 lg:w-10'>
               <BsFillPlayFill size={30} />
             </div>
+            <FavoriteButton movieId={id} />
           </div>
           <p className='mt-4 font-semibold text-green-400'>
             New <span className='text-white'>2023</span>
