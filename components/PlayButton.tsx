@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import { BsFillPlayFill } from 'react-icons/bs'
 
 interface PlayButtonProps {
-  movieId: string
+  movieId?: string
 }
 
 const PlayButton: FC<PlayButtonProps> = ({ movieId }) => {
